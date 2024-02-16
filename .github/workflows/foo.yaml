@@ -11,12 +11,14 @@ on:
         required: true
         default: "development"
 jobs:
-  check-bats-version:
+  print-tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "14"
-      - run: npm install -g bats
-      - run: bats -v
+      - name: Set target branch
+        id: set_branch
+        run: |
+          echo "TARGET_BRANCH=${{ github.event.inputs.backend || github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Use target branch
+        run: |
+          echo "Using target branch $TARGET_BRANCH"
