@@ -1,34 +1,22 @@
 name: learn-github-actions
 run-name: ${{ github.actor }} is learning GitHub Actions
 on:
+  push:
+    branches:
+      - "**"
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: "Log level"
+      backend:
+        description: "Backend for testing"
         required: true
-        default: "warning"
-        type: choice
-        options:
-          - info
-          - warning
-          - debug
-      print_tags:
-        description: "True to print to STDOUT"
-        required: true
-        type: boolean
-      tags:
-        description: "Test scenario tags"
-        required: true
-        type: string
-      environment:
-        description: "Environment to run tests against"
-        type: environment
-        required: true
-
+        default: "development"
 jobs:
-  print-tag:
+  check-bats-version:
     runs-on: ubuntu-latest
-    if: ${{ inputs.print_tags }}
     steps:
-      - name: Print the input tag to STDOUT
-        run: echo  The tags are ${{ inputs.tags }}
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+      - run: npm install -g bats
+      - run: bats -v
