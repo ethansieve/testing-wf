@@ -21,4 +21,4 @@ jobs:
 
       - name: Use target branch
         run: |
-          ping $TARGET_BRANCH
+          ping -c 1 $TARGET_BRANCH
