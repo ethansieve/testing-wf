@@ -21,4 +21,4 @@ jobs:
 
       - name: Use target branch
         run: |
-          echo "Using target branch $TARGET_BRANCH"
+          ping $TARGET_BRANCH
