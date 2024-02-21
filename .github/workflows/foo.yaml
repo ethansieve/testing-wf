@@ -2,16 +2,23 @@ name: pull request comment
 on:
   issue_comment:
     types: [created, edited, deleted]
+  push:
+    branches:
+      - "**"
 jobs:
-  job01:
-    if: contains(github.event.comment.html_url, '/pull/') # check if the comments come from pull request, exclude those from issue.
+  check-test-command:
     runs-on: ubuntu-latest
     steps:
-      - name: say hello
-        if: contains(github.event.comment.body, '/support') # check the comment if it contains the keywords
-        run: |
-          echo say hello
-      - name: test
-        if: contains(github.event.comment.body, '/test') # check the comment if it contains the keywords
-        run: |
-          echo test
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Install PyGithub
+        run: pip install PyGithub
+
+      - name: Infer PR number and Check for /test command in comments
+        run: python check_test_command.py "${{ secrets.GITHUB_TOKEN }}" "${{ github.repository }}" "${{ github.sha }}"
