@@ -6,11 +6,21 @@ on:
     branches:
       - "**"
 jobs:
-  job01:
+  check-test-command:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: say hello
-        # if: contains(github.event.comment.body, '/test') # check the comment if it contains the keywords
-        run: |
-          python3 test.py "${{ github.event.comment.body }}"
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Install PyGithub
+        run: pip install PyGithub
+
+      - name: Check for /test command in PR comments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python check_test_command.py "${{ secrets.GITHUB_TOKEN }}" "${{ github.event.pull_request.number }}" "${{ github.repository }}"
