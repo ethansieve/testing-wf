@@ -19,4 +19,5 @@ jobs:
         run: |
           echo test
       - name: fail
+        if: !contains(github.event.comment.body , '/support') # check the comment if it contains the keywords
         run: exit 1
