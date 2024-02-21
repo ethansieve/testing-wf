@@ -29,6 +29,7 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
+    print(sys.argv)
     github_token = sys.argv[1]
     pr_number = sys.argv[2]
     repo_name = sys.argv[3]
