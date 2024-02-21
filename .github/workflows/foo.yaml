@@ -1,24 +1,19 @@
 name: learn-github-actions
 run-name: ${{ github.actor }} is learning GitHub Actions
+name: pull request comment
 on:
-  push:
-    branches:
-      - "**"
-  workflow_dispatch:
-    inputs:
-      backend:
-        description: "Backend for testing"
-        required: true
-        default: "development"
+  issue_comment:
+    types: [created, edited, deleted]
 jobs:
-  print-tag:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set target branch
-        id: set_branch
-        run: |
-          echo "TARGET_BRANCH=${{ github.event.inputs.backend || github.ref_name }}" >> $GITHUB_ENV
-
-      - name: Use target branch
-        run: |
-          ping -c 1 $TARGET_BRANCH
+ job01:
+   if: contains(github.event.comment.html_url, '/pull/')    # check if the comments come from pull request, exclude those from issue.
+   runs-on: [re-centos7]
+   steps:
+    - name: say hello
+      if: contains(github.event.comment.body, '/support')   # check the comment if it contains the keywords
+      run: |
+       echo say hello
+    - name: test
+      if: contains(github.event.comment.body, '/test')  # check the comment if it contains the keywords
+      run: |
+       echo test
