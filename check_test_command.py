@@ -2,20 +2,31 @@ import sys
 from github import Github
 
 
-def check_test_command(token, pr_number, repo_name):
-    # Initialize PyGithub with a GitHub access token
-    g = Github(token)
+def find_pr_by_sha(repo, commit_sha):
+    open_prs = repo.get_pulls(state="open")
+    for pr in open_prs:
+        if pr.head.sha == commit_sha:
+            return pr
+    return None
 
-    # Use the passed repository name
+
+def check_test_command(github_token, repo_name, commit_sha):
+    # Initialize PyGithub with the GitHub token
+    g = Github(github_token)
+
     repo = g.get_repo(repo_name)
-    pr = repo.get_pull(int(pr_number))
+    pr = find_pr_by_sha(repo, commit_sha)
+
+    if not pr:
+        print("No open PR found for this commit SHA.")
+        return
 
     # Loop through the comments to find one starting with "/test"
     found_command = False
     for comment in pr.get_issue_comments():
         if comment.body.startswith("/test"):
             found_command = True
-            print("Found /test command in comments.")
+            print(f"Found /test command in PR #{pr.number} comments.")
             break
 
     if not found_command:
@@ -25,13 +36,9 @@ def check_test_command(token, pr_number, repo_name):
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print(
-            "Usage: python check_test_command.py <GITHUB_TOKEN> <PR_NUMBER> <REPO_NAME>"
+            "Usage: python check_test_command.py <GITHUB_TOKEN> <REPO_NAME> <COMMIT_SHA>"
         )
         sys.exit(1)
 
-    print(sys.argv)
-    github_token = sys.argv[1]
-    pr_number = sys.argv[2]
-    repo_name = sys.argv[3]
-
-    check_test_command(github_token, pr_number, repo_name)
+    github_token, repo_name, commit_sha = sys.argv[1], sys.argv[2], sys.argv[3]
+    check_test_command(github_token, repo_name, commit_sha)

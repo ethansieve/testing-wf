@@ -20,7 +20,8 @@ jobs:
       - name: Install PyGithub
         run: pip install PyGithub
 
-      - name: Check for /test command in PR comments
+      - name: Infer PR number and Check for /test command in comments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python check_test_command.py "${{ secrets.GITHUB_TOKEN }}" "${{ github.event.pull_request.number }}" "${{ github.repository }}"
+          COMMIT_SHA: ${{ github.sha }}
+        run: python check_test_command.py "${{ secrets.GITHUB_TOKEN }}" "${{ github.repository }}" "$COMMIT_SHA"
