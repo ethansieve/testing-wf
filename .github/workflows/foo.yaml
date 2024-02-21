@@ -21,7 +21,4 @@ jobs:
         run: pip install PyGithub
 
       - name: Infer PR number and Check for /test command in comments
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMIT_SHA: ${{ github.sha }}
-        run: python check_test_command.py "${{ secrets.GITHUB_TOKEN }}" "${{ github.repository }}" "$COMMIT_SHA"
+        run: python check_test_command.py "${{ secrets.GITHUB_TOKEN }}" "${{ github.repository }}" "${{ github.sha }}"
